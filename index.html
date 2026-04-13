@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The STRAT — MGO Lab Complete Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:#fff;color:#111827}
+#app{display:flex;height:100vh;overflow:hidden}
+#sidebar{width:260px;background:#fafafa;border-right:1px solid #efefef;display:flex;flex-direction:column;flex-shrink:0}
+#sb-brand{padding:18px 16px 12px;border-bottom:1px solid #efefef}
+#sb-brand .name{font-size:14px;font-weight:700;letter-spacing:-0.3px}
+#sb-brand .sub{font-size:11px;color:#9ca3af;margin-top:2px}
+#sb-progress{padding:12px 16px;border-bottom:1px solid #efefef}
+.prog-row{display:flex;justify-content:space-between;margin-bottom:6px}
+.prog-label{font-size:11px;color:#6b7280;font-weight:500}
+#prog-pct{font-size:11px;font-weight:700}
+#prog-bar-wrap{height:5px;background:#f3f4f6;border-radius:10px;overflow:hidden}
+#prog-bar{height:100%;background:#111827;border-radius:10px;width:0%;transition:width 0.5s ease}
+#prog-sub{font-size:10px;color:#9ca3af;margin-top:4px}
+#sb-nav{flex:1;overflow-y:auto;padding:8px}
+.nav-sec{font-size:10px;color:#d1d5db;font-weight:600;letter-spacing:1px;padding:8px 8px 4px;text-transform:uppercase}
+.nav-btn{width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:8px;padding:9px 10px;cursor:pointer;margin-bottom:2px;display:flex;align-items:center;gap:9px;font-family:inherit;transition:background 0.1s}
+.nav-btn:hover{background:#f3f4f6}
+.nav-btn.active{background:#fff;border-color:#e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.nv-icon{font-size:15px;flex-shrink:0}
+.nv-text{flex:1;min-width:0}
+.nv-title{font-size:12px;font-weight:500;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-btn.active .nv-title{font-weight:700;color:#111827}
+.nv-meta{font-size:10px;color:#9ca3af;margin-top:1px}
+.done-ck{font-size:11px;color:#22c55e;flex-shrink:0}
+#sb-footer{padding:10px 16px;border-top:1px solid #efefef;font-size:10px;color:#d1d5db;text-align:center}
+#main{flex:1;overflow-y:auto;background:#fff}
+.page{max-width:700px;margin:0 auto;padding:44px 48px;display:none}
+.page.active{display:block}
+.pnl-page{max-width:960px;margin:0 auto;padding:28px 32px;display:none}
+.pnl-page.active{display:block}
+
+/* HEADER */
+.mod-hdr{margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid #f3f4f6}
+.mod-eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.mod-big-icon{font-size:34px}
+.mod-num{font-size:10px;color:#9ca3af;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.mod-title{font-size:28px;font-weight:700;letter-spacing:-0.6px;line-height:1.2}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.badge{display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border-radius:20px;padding:4px 12px;font-size:11px;color:#6b7280;font-weight:500}
+.done-badge{font-size:11px;color:#22c55e;font-weight:600;display:none}
+.mod-intro{font-size:15px;color:#374151;line-height:1.9;margin-bottom:36px;padding:18px 20px;background:#f9fafb;border-left:3px solid #111827;border-radius:0 10px 10px 0}
+
+/* LESSONS */
+.lesson{margin-bottom:44px}
+.lesson-label{font-size:10px;font-weight:700;color:#9ca3af;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+.lesson-title{font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.3px;margin-bottom:6px}
+.lesson-tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:14px}
+.body-text{font-size:15px;color:#374151;line-height:1.9}
+.body-text p{margin-bottom:14px}
+.body-text p:last-child{margin-bottom:0}
+.body-text strong{font-weight:600;color:#111827}
+.body-text em{font-style:italic;color:#6b7280}
+
+/* CALLOUTS */
+.box{border-radius:10px;padding:14px 18px;margin:18px 0;border-left:3px solid;background:#f9fafb}
+.box-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.box-text{font-size:13px;line-height:1.75;color:#374151}
+.box-text p{margin-bottom:8px}.box-text p:last-child{margin-bottom:0}
+.box.rule{background:#eff6ff;border-color:#3b82f6}.box.rule .box-label{color:#1d4ed8}
+.box.insight{background:#f0fdf4;border-color:#22c55e}.box.insight .box-label{color:#15803d}
+.box.warn{background:#fffbeb;border-color:#f59e0b}.box.warn .box-label{color:#92400e}
+.box.example{background:#faf5ff;border-color:#8b5cf6}.box.example .box-label{color:#6d28d9}
+.box.danger{background:#fff1f2;border-color:#f87171}.box.danger .box-label{color:#be123c}
+.box.key{background:#f0f9ff;border-color:#38bdf8}.box.key .box-label{color:#0369a1}
+.box.quote{background:#fafafa;border-color:#e5e7eb;font-style:italic}.box.quote .box-text{color:#6b7280}
+
+/* GRID */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.card{background:#fafafa;border:1px solid #f0f0f0;border-radius:10px;padding:14px}
+.card-title{font-size:12px;font-weight:700;color:#111827;margin-bottom:5px}
+.card-body{font-size:12px;color:#6b7280;line-height:1.55}
+
+/* STEPS */
+.steps{margin:18px 0}
+.step{display:flex;gap:12px;margin-bottom:16px}
+.step-n{width:28px;height:28px;background:#111827;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-body{}
+.step-h{font-size:14px;font-weight:600;color:#111827;margin-bottom:3px}
+.step-p{font-size:13px;color:#6b7280;line-height:1.6}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:13px}
+.tbl th{background:#f9fafb;padding:10px 14px;text-align:left;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb}
+.tbl td{padding:10px 14px;border-bottom:1px solid #f3f4f6;color:#374151;line-height:1.5}
+.tbl tr:last-child td{border-bottom:none}
+
+/* QUIZ */
+.quiz{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin:28px 0}
+.quiz-hdr{font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.quiz-q{font-size:14px;font-weight:600;color:#111827;line-height:1.6;margin-bottom:14px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.qopt{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px;color:#374151;text-align:left;font-family:inherit;transition:all 0.12s;line-height:1.5}
+.qopt:hover:not(:disabled){border-color:#9ca3af;background:#f9fafb}
+.qopt.correct{background:#f0fdf4;border-color:#22c55e;color:#15803d;font-weight:600;cursor:default}
+.qopt.wrong{background:#fff1f2;border-color:#f87171;color:#be123c;cursor:default}
+.qopt:disabled{cursor:default}
+.quiz-fb{margin-top:12px;font-size:13px;padding:10px 14px;border-radius:8px;display:none;line-height:1.6}
+.quiz-fb.show{display:block}
+.quiz-fb.c{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.quiz-fb.w{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}
+
+/* DIVIDER */
+.hr{height:1px;background:#f3f4f6;margin:32px 0}
+
+/* COMPLETE */
+.cmp-area{margin-top:36px;padding-top:24px;border-top:2px solid #f3f4f6}
+.cmp-btn{background:#22c55e;color:#fff;border:none;border-radius:10px;padding:13px 26px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s}
+.cmp-btn:hover{background:#16a34a}
+.cmp-done{display:none;align-items:center;gap:10px;color:#15803d;font-weight:600;font-size:14px;padding:14px 18px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0}
+
+/* PNL */
+.pnl-toprow{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px}
+.pnl-title-row{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.pnl-h{font-size:22px;font-weight:700;letter-spacing:-0.5px}
+.pnl-sub{font-size:13px;color:#6b7280}
+.log-btn{background:#111827;color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.log-btn.cancel{background:#f3f4f6;color:#374151}
+.form-box{background:#fafafa;border:1px solid #e5e7eb;border-radius:14px;padding:18px;margin-bottom:20px}
+.form-ttl{font-size:13px;font-weight:600;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.ff label{display:block;font-size:11px;color:#6b7280;margin-bottom:4px;font-weight:500}
+.ff input,.ff select,.ff textarea{width:100%;border:1px solid #e5e7eb;border-radius:7px;padding:8px 10px;font-size:13px;color:#111827;background:#fff;font-family:inherit}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:#6b7280}
+.ff textarea{min-height:60px;resize:vertical}
+.prev-box{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;gap:8px;align-items:center;font-size:12px;color:#6b7280}
+.prev-box .val{font-size:15px;font-weight:700}
+.add-btn{background:#111827;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.stats-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.sc{background:#fafafa;border:1px solid #f0f0f0;border-radius:12px;padding:14px 16px;flex:1;min-width:110px}
+.sc-lbl{font-size:11px;color:#9ca3af;font-weight:500;margin-bottom:4px}
+.sc-val{font-size:21px;font-weight:700;letter-spacing:-0.5px}
+.sc-sub{font-size:11px;color:#9ca3af;margin-top:2px}
+.tbl-box{background:#fafafa;border:1px solid #f0f0f0;border-radius:14px;overflow:hidden}
+.tbl-hdr{padding:12px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+.tbl-htitle{font-size:13px;font-weight:600}
+.fbtns{display:flex;gap:6px}
+.fbtn{background:transparent;color:#6b7280;border:1px solid #e5e7eb;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
+.fbtn.active{background:#111827;color:#fff;border-color:#111827}
+.empty{padding:36px;text-align:center;color:#9ca3af;font-size:13px}
+.tt{width:100%;border-collapse:collapse;font-size:12px}
+.tt th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:#9ca3af;letter-spacing:0.5px;white-space:nowrap;border-bottom:1px solid #f0f0f0}
+.tt td{padding:9px 12px;border-bottom:1px solid #f9fafb;white-space:nowrap}
+.tt tr:hover td{background:#f9fafb}
+.db{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.db.long{background:#f0fdf4;color:#16a34a}
+.db.short{background:#fff1f2;color:#dc2626}
+.del-btn{background:transparent;border:1px solid #f0f0f0;border-radius:6px;padding:3px 8px;font-size:11px;color:#9ca3af;cursor:pointer;font-family:inherit}
+.del-btn:hover{background:#fee2e2;color:#ef4444;border-color:#fca5a5}
+.mono{font-family:monospace}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="sb-brand"><div class="name">The STRAT &mdash; MGO Lab</div><div class="sub">Complete Beginner Course</div></div>
+  <div id="sb-progress">
+    <div class="prog-row"><span class="prog-label">Your Progress</span><span id="prog-pct">0%</span></div>
+    <div id="prog-bar-wrap"><div id="prog-bar"></div></div>
+    <div id="prog-sub">0 of 5 modules complete</div>
+  </div>
+  <div id="sb-nav">
+    <div class="nav-sec">Course Modules</div>
+    <button class="nav-btn active" data-view="1" onclick="showView('1')">
+      <span class="nv-icon">&#128208;</span>
+      <div class="nv-text"><div class="nv-title">Core Components</div><div class="nv-meta">Module 1 &middot; ~10 min</div></div>
+      <span class="done-ck" id="ck1" style="display:none">&#10003;</span>
+    </button>
+    <button class="nav-btn" data-view="2" onclick="showView('2')">
+      <span class="nv-icon">&#127754;</span>
+      <div class="nv-text"><div class="nv-title">Fundamental Principles</div><div class="nv-meta">Module 2 &middot; ~12 min</div></div>
+      <span class="done-ck" id="ck2" style="display:none">&#10003;</span>
+    </button>
+    <button class="nav-btn" data-view="3" onclick="showView('3')">
+      <span class="nv-icon">&#127919;</span>
+      <div class="nv-text"><div class="nv-title">Actionable Signals</div><div class="nv-meta">Module 3 &middot; ~12 min</div></div>
+      <span class="done-ck" id="ck3" style="display:none">&#10003;</span>
+    </button>
+    <button class="nav-btn" data-view="4" onclick="showView('4')">
+      <span class="nv-icon">&#128260;</span>
+      <div class="nv-text"><div class="nv-title">Advanced Patterns</div><div class="nv-meta">Module 4 &middot; ~10 min</div></div>
+      <span class="done-ck" id="ck4" style="display:none">&#10003;</span>
+    </button>
+    <button class="nav-btn" data-view="5" onclick="showView('5')">
+      <span class="nv-icon">&#128737;</span>
+      <div class="nv-text"><div class="nv-title">Execution &amp; Risk</div><div class="nv-meta">Module 5 &middot; ~10 min</div></div>
+      <span class="done-ck" id="ck5" style="display:none">&#10003;</span>
+    </button>
+    <div class="nav-sec" style="margin-top:10px">Tools</div>
+    <button class="nav-btn" data-view="pnl" onclick="showView('pnl')">
+      <span class="nv-icon">&#128202;</span>
+      <div class="nv-text"><div class="nv-title">P&amp;L Tracker</div><div class="nv-meta">Log &amp; review trades</div></div>
+    </button>
+  </div>
+  <div id="sb-footer">MGO Lab &middot; The STRAT &copy; 2025</div>
+</div>
+
+<div id="main">
+
+<!-- ===================== MODULE 1 ===================== -->
+<div id="view-1" class="page active">
+  <div class="mod-hdr">
+    <div class="mod-eyebrow"><span class="mod-big-icon">&#128208;</span><div><div class="mod-num">Module 1 of 5</div><div class="mod-title">Core Components: Candlestick Scenarios</div></div></div>
+    <div class="badge-row"><span class="badge">&#128337; ~10 min</span><span class="badge">3 scenarios</span><span class="badge">1 quiz</span><span class="done-badge" id="b1">&#10003; Completed</span></div>
+  </div>
+  <div class="mod-intro">The STRAT starts with one radical idea: <strong>forget indicators.</strong> No RSI, no MACD, no moving averages. Everything you need to know about price is already encoded in the candles themselves. Your only job is to label every single candle with one of three numbers &mdash; 1, 2, or 3 &mdash; the moment it closes. That&rsquo;s the foundation of the entire system.</div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 1.1</div>
+    <div class="lesson-title">Scenario 1: The Inside Bar &mdash; Consolidation &amp; Equilibrium</div>
+    <span class="lesson-tag" style="background:#f59e0b18;color:#b45309">Setup Bar</span>
+    <div class="body-text">
+      <p>A <strong>Scenario 1</strong> (also called an Inside Bar or simply a &ldquo;1 bar&rdquo;) is any candle whose high is <em>lower</em> than the previous candle&rsquo;s high AND whose low is <em>higher</em> than the previous candle&rsquo;s low. In other words, the entire range of the current candle fits completely inside the range of the candle before it.</p>
+      <p>What does this mean? It means neither buyers nor sellers had enough conviction to push price beyond the existing boundaries. The market is pausing. It&rsquo;s like a coiled spring &mdash; energy is being stored, and the longer the consolidation lasts, the more powerful the eventual breakout tends to be.</p>
+      <p><strong>Consolidation and equilibrium</strong> describe the psychology behind the 1 bar. Both sides are temporarily satisfied. No aggressive buying or selling is occurring. Volume typically drops during a 1 bar, confirming the lack of participation. This is the market catching its breath.</p>
+      <p><strong>Range within prior candle</strong> is the mechanical definition. The current candle&rsquo;s range (from its low to its high) is entirely contained within the prior candle&rsquo;s range. This makes the prior candle&rsquo;s high and low the key levels to watch &mdash; they become the decision points for what happens next.</p>
+      <p><strong>Decision point for direction</strong> is why traders love 1 bars. They set up one of two clear outcomes: price either breaks above the prior high (becoming a 2U) or breaks below the prior low (becoming a 2D). The 1 bar itself gives you the entry levels before anything has happened. You place alerts at both boundaries and wait for the market to choose its direction.</p>
+    </div>
+    <div class="box warn">
+      <div class="box-label">&#9888; Critical Rule</div>
+      <div class="box-text"><p><strong>Never trade a timeframe that is currently forming a Scenario 1.</strong> It is in a coil. You do not know which direction it will resolve. Entering before resolution is guessing, not trading. Wait. The market will tell you.</p></div>
+    </div>
+    <div class="box example">
+      <div class="box-label">&#128196; Real World Example</div>
+      <div class="box-text"><p>Imagine NVDA had a big down day, trading from $140 down to $128 (prior bar). The next day, NVDA only trades between $131 and $137. Both the high ($137) and the low ($131) are inside the prior day&rsquo;s range of $128&ndash;$140. That next day is a Scenario 1. NVDA is consolidating. The trade is set up: if tomorrow breaks above $137, that&rsquo;s a 2U signal. If it breaks below $131, that&rsquo;s a 2D signal.</p></div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 1.2</div>
+    <div class="lesson-title">Scenario 2: The Directional Bar &mdash; One-Sided Control</div>
+    <span class="lesson-tag" style="background:#22c55e18;color:#15803d">Trend Bar</span>
+    <div class="body-text">
+      <p>A <strong>Scenario 2</strong> is a candle that breaks exactly <em>one</em> side of the previous candle&rsquo;s range. It either takes out the prior high (called a <strong>2U</strong> &mdash; Directional Up) or takes out the prior low (called a <strong>2D</strong> &mdash; Directional Down). It does NOT break both sides.</p>
+      <p><strong>2U (Up) &mdash; Breaks prior high:</strong> When the current candle exceeds the prior high, buyers are demonstrating institutional-level aggression. They are willing to pay more than anyone was willing to pay during the previous session. This is one-sided bullish control. Price discovery is happening upward. The market is saying: &ldquo;we need to find sellers at higher prices.&rdquo;</p>
+      <p><strong>2D (Down) &mdash; Breaks prior low:</strong> The inverse. Sellers are in control. They are willing to accept less than anyone accepted in the prior session. Price is searching for buyers at lower levels. This represents one-sided bearish pressure.</p>
+      <p><strong>Indicates one-sided control</strong> is the key phrase. Unlike a Scenario 3 (which shows both sides fighting), a 2 bar tells you clearly which camp is winning. A series of consecutive 2U bars on the daily chart is the definition of a healthy uptrend. Rob Smith&rsquo;s Second Universal Truth states: <em>price must trade in the direction of the most Scenario 2s.</em> Count your 2U and 2D bars &mdash; whoever has more, wins.</p>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title" style="color:#15803d">&#9650; Scenario 2U &mdash; Bullish</div>
+        <div class="card-body">Breaks prior high only. Buyers in control. If FTFC is green, this is your trend confirmation. Look to buy pullbacks that form 1 bars, then break 2U again.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#dc2626">&#9660; Scenario 2D &mdash; Bearish</div>
+        <div class="card-body">Breaks prior low only. Sellers in control. If FTFC is red, this confirms the downtrend. Look to sell rallies that form 1 bars, then break 2D again.</div>
+      </div>
+    </div>
+    <div class="box insight">
+      <div class="box-label">&#128161; Key Insight</div>
+      <div class="box-text"><p>The color of the 2 bar matters less than its direction. A <em>red</em> candle that still takes out the prior high is still a 2U &mdash; buyers won the session even if they gave back some gains by the close. The bar type is defined entirely by what levels were taken out, not by the open-to-close relationship.</p></div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 1.3</div>
+    <div class="lesson-title">Scenario 3: The Outside Bar &mdash; Expansion &amp; Price Discovery</div>
+    <span class="lesson-tag" style="background:#ef444418;color:#be123c">Expansion Bar</span>
+    <div class="body-text">
+      <p>A <strong>Scenario 3</strong> (Outside Bar) is the most dramatic of the three. It breaks <em>both</em> the prior high AND the prior low in a single session. The range completely engulfs the prior candle. This is also called an &ldquo;expansion bar&rdquo; or &ldquo;Mother Bar&rdquo; because all future candles for a period will likely live inside its range.</p>
+      <p><strong>Breaks both high and low</strong> is the mechanical definition. Both buyers and sellers were aggressive enough to explore territory on both sides of the prior range. This represents maximum indecision and maximum volatility simultaneously.</p>
+      <p><strong>Range expansion and volatility</strong> is the market-structure consequence. When a 3 bar forms, the new range (from its low to its high) becomes the new reference zone. Candles that form inside this 3 bar&rsquo;s range are Scenario 1s relative to it. Candles that break out of it are Scenario 2s.</p>
+      <p><strong>Discovery candle</strong> is the conceptual framing. The market is searching for fair value. Both buyers and sellers are participating aggressively, but neither has clearly won yet. The close of the 3 bar relative to its midpoint tells you which side had the advantage by end of session &mdash; a 3 bar that closes in its upper half suggests buyers won the battle despite the two-sided action.</p>
+      <p>There&rsquo;s a crucial secret about the 3 bar: <strong>every Scenario 3 begins as a Scenario 2.</strong> A candle that breaks the prior high first is a 2U. If it then reverses and also takes out the prior low, it becomes a 3. This transformation is one of the most important traps in trading &mdash; breakout buyers who entered on the 2U are now trapped as the candle becomes a 3.</p>
+    </div>
+    <div class="box danger">
+      <div class="box-label">&#128683; No-No Zone</div>
+      <div class="box-text"><p>Never try to trade <em>inside</em> a forming Scenario 3. The price action is violent and two-directional. You will get chopped. Wait for the 3 bar to close, identify which side it closed on, and then trade the next bar&rsquo;s break in that direction.</p></div>
+    </div>
+    <div class="box key">
+      <div class="box-label">&#128273; The Identification Algorithm</div>
+      <div class="box-text">
+        <p>When a new candle closes, ask these questions in order:</p>
+        <p><strong>1. Did it break the prior HIGH?</strong><br>YES &rarr; go to step 2. NO &rarr; go to step 3.</p>
+        <p><strong>2. Did it ALSO break the prior LOW?</strong><br>YES &rarr; It&rsquo;s a <strong>Scenario 3</strong> (Outside Bar). NO &rarr; It&rsquo;s a <strong>Scenario 2U</strong> (Directional Up).</p>
+        <p><strong>3. Did it break the prior LOW?</strong><br>YES &rarr; It&rsquo;s a <strong>Scenario 2D</strong> (Directional Down). NO &rarr; It&rsquo;s a <strong>Scenario 1</strong> (Inside Bar).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="quiz">
+    <div class="quiz-hdr">&#127947; Knowledge Check &mdash; Module 1</div>
+    <div class="quiz-q">Yesterday, SPX had a high of 5,250 and a low of 5,180. Today, SPX hit a high of 5,270 and a low of 5,160. What type of Scenario did today create?</div>
+    <div class="quiz-opts">
+      <button class="qopt" onclick="answerQ('q1','a','wrong')">A. Scenario 1 &mdash; Inside Bar, price stayed within range</button>
+      <button class="qopt" onclick="answerQ('q1','b','wrong')">B. Scenario 2U &mdash; Only the prior high was broken</button>
+      <button class="qopt" onclick="answerQ('q1','c','correct')">C. Scenario 3 &mdash; Both the prior high AND low were broken</button>
+      <button class="qopt" onclick="answerQ('q1','d','wrong')">D. Scenario 2D &mdash; Only the prior low was broken</button>
+    </div>
+    <div class="quiz-fb" id="q1-fb"></div>
+  </div>
+
+  <div class="cmp-area" id="ca1">
+    <button class="cmp-btn" onclick="markComplete(1)">Mark Complete &amp; Continue &rarr;</button>
+  </div>
+</div>
+
+<!-- ===================== MODULE 2 ===================== -->
+<div id="view-2" class="page">
+  <div class="mod-hdr">
+    <div class="mod-eyebrow"><span class="mod-big-icon">&#127754;</span><div><div class="mod-num">Module 2 of 5</div><div class="mod-title">Fundamental Principles: FTFC &amp; Broadening Formations</div></div></div>
+    <div class="badge-row"><span class="badge">&#128337; ~12 min</span><span class="badge">2 principles</span><span class="badge">1 quiz</span><span class="done-badge" id="b2">&#10003; Completed</span></div>
+  </div>
+  <div class="mod-intro">If Module 1 is your language &mdash; learning to label bars &mdash; Module 2 is your <strong>grammar</strong>. Knowing a 2U bar exists means nothing without knowing whether the broader context supports buying. Full Time Frame Continuity and Broadening Formations give you that context. They answer the question: <em>am I trading with the machine or against it?</em></div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 2.1</div>
+    <div class="lesson-title">Full Time Frame Continuity (FTFC)</div>
+    <span class="lesson-tag" style="background:#6366f118;color:#4338ca">Principle</span>
+    <div class="body-text">
+      <p><strong>Full Time Frame Continuity</strong> is the backbone of every STRAT trade. The concept is simple: approximately 70% of daily market volume is algorithmic. These algorithms execute based on time and price &mdash; they don&rsquo;t feel fear or greed. When the monthly, weekly, daily, and hourly charts are all showing the same bar color (all green or all red), that means every major algorithmic participant is positioned in the same direction. Trading with FTFC means trading alongside institutional-size capital.</p>
+      <p>FTFC is determined entirely by bar type. A timeframe is considered <strong>green</strong> (bullish) when its most recent closed candle is a 2U (took out the prior period&rsquo;s high). It&rsquo;s <strong>red</strong> (bearish) when the most recent closed candle is a 2D. The goal before every trade is to check every timeframe from monthly down to your entry timeframe and determine the color of each.</p>
+    </div>
+    <div class="box insight">
+      <div class="box-label">&#128161; FTFC Full Stack</div>
+      <div class="box-text"><p>Monthly Green + Weekly Green + Daily Green + Hourly Green = <strong>FTFC Up.</strong> This is your highest-probability long environment. Algorithms at every level are buying. A pullback to a 1-bar on the 15-minute chart with everything green above it is one of the cleanest trade setups in The STRAT.</p></div>
+    </div>
+
+    <div class="lesson-label" style="margin-top:28px">Lesson 2.2</div>
+    <div class="lesson-title">The Tides: Monthly &amp; Weekly Timeframes</div>
+    <div class="body-text">
+      <p>The <strong>Tides</strong> refer to the Monthly and Weekly charts. These are where the largest pools of institutional capital operate. Mutual funds, pension funds, and sovereign wealth managers think in monthly and quarterly terms. Their orders are so large that they create multi-week directional bias in the market.</p>
+      <p>When the Monthly chart is a 2U (green), it means that at some point this month, price pushed above last month&rsquo;s high. That is a macro bullish signal. When the Weekly chart is also 2U, the trend is confirmed on both macro levels. This is the Tide. You do not fight the Tide without exceptional reason and a high-timeframe reversal setup.</p>
+    </div>
+    <div class="box rule">
+      <div class="box-label">&#128204; The Tide Rule</div>
+      <div class="box-text"><p>Never take a short trade when the Monthly and Weekly are both green unless you have a Scenario 3 on the daily chart or higher. The institutions at that level are still buyers. Any short you take is swimming directly against the largest force in the market.</p></div>
+    </div>
+
+    <div class="lesson-label" style="margin-top:28px">Lesson 2.3</div>
+    <div class="lesson-title">The Waves: Daily Timeframe</div>
+    <div class="body-text">
+      <p>The <strong>Daily chart</strong> is your Wave. It sits between the macro (Tide) and the micro (Ripple). The daily connects the big institutional bias to what you&rsquo;re actually seeing play out in real time. A daily 2U bar in the context of a green Weekly Tide tells you that intermediate-term traders are also positioned long. This alignment &mdash; Tide plus Wave in the same direction &mdash; is the foundation for any serious trade setup.</p>
+      <p>A critical skill is reading when the Wave is <em>conflicting</em> with the Tide. If the Monthly is green but the Daily has printed two consecutive 2D bars, you are watching a counter-trend pullback unfold. You can either wait for it to resolve, or look for the specific reversal setups covered in Module 4 that capitalize on the pullback ending.</p>
+    </div>
+
+    <div class="lesson-label" style="margin-top:28px">Lesson 2.4</div>
+    <div class="lesson-title">The Ripples: 60-Minute and Lower</div>
+    <div class="body-text">
+      <p>The <strong>60-minute and 15-minute charts</strong> are your execution timeframes &mdash; the Ripples. This is where you actually pull the trigger. But the Ripple must align with the Wave and the Tide. A 2U on the 15-minute chart means nothing without the daily and weekly context to back it up. Without that context, you are simply reacting to noise.</p>
+      <p><strong>Synchronization of candle colors</strong> is the phrase that ties all three layers together. Your ideal trade has: Tide (monthly/weekly) = green, Wave (daily) = green, Ripple (60min/15min) = green. When all three layers show the same color, the STRAT describes this as a synchronized stack &mdash; institutional, intermediate, and intraday players are all aligned. These are the highest-probability entries the system produces.</p>
+    </div>
+    <div class="tbl">
+      <tr><th>Layer</th><th>Timeframes</th><th>Who Operates Here</th><th>Your Use</th></tr>
+      <tr><td><strong>The Tide</strong></td><td>Monthly, Weekly</td><td>Institutions, Funds</td><td>Set directional bias</td></tr>
+      <tr><td><strong>The Wave</strong></td><td>Daily, 4-Hour</td><td>Swing traders, HFs</td><td>Confirm trend context</td></tr>
+      <tr><td><strong>The Ripple</strong></td><td>60-min, 15-min</td><td>Day traders, Algos</td><td>Time your entry</td></tr>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 2.5</div>
+    <div class="lesson-title">Broadening Formations: Visual Price Discovery</div>
+    <span class="lesson-tag" style="background:#8b5cf618;color:#6d28d9">Structure</span>
+    <div class="body-text">
+      <p>Most new traders think of support and resistance as flat horizontal lines. The STRAT teaches you that this is a simplification that costs money. In reality, as markets move, support and resistance <em>expand</em>. This is the concept behind <strong>Broadening Formations.</strong></p>
+      <p><strong>Diverging trendlines</strong> are the visual signature. When you connect the swing highs with a line and the swing lows with another line, and those two lines are pointing <em>away</em> from each other (like a megaphone or trumpet), you have a Broadening Formation. Highs are getting higher while lows are getting lower &mdash; simultaneously. The range is expanding.</p>
+      <p><strong>Higher highs and lower lows</strong> is the structural definition. Every swing high is above the previous swing high, and every swing low is below the previous swing low. This sounds chaotic &mdash; and it is. It reflects a market where both buyers and sellers are becoming more aggressive over time. Volatility is expanding as both sides fight harder for control.</p>
+      <p><strong>Visual price discovery</strong> explains the <em>why</em>. The market is literally searching for where buyers and sellers will agree on value. The boundaries of the Broadening Formation represent those extremes. When price reaches the upper trendline, it has found sellers. When it reaches the lower trendline, it has found buyers.</p>
+      <p>Here&rsquo;s the crucial connection to Scenario 3: a 3 bar on the daily chart is, in essence, a one-day Broadening Formation. The outside bar breaks both the prior high and low &mdash; it searched both directions for value. When you zoom out on a chart and see a Broadening Formation, you are looking at a series of Scenario 3 logic playing out over a longer timeframe. They are the same truth at different scales.</p>
+    </div>
+    <div class="box insight">
+      <div class="box-label">&#128161; How to Trade Broadening Formations</div>
+      <div class="box-text">
+        <p>The boundaries of the formation are your targets and your warnings. If you are long and price is approaching the upper trendline of a Broadening Formation on the weekly chart, that is your magnitude target &mdash; where you take profits. If price is at the lower trendline with a Hammer candle forming while FTFC is green, that is a high-probability long entry with the formation boundary acting as support.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="quiz">
+    <div class="quiz-hdr">&#127947; Knowledge Check &mdash; Module 2</div>
+    <div class="quiz-q">The Monthly chart is a 2U (green). The Weekly chart is a 2U (green). The Daily chart just printed a 2D (red). The 60-minute chart is showing a 1 bar. What should you do?</div>
+    <div class="quiz-opts">
+      <button class="qopt" onclick="answerQ('q2','a','wrong')">A. Short the market immediately &mdash; the daily is red so sell</button>
+      <button class="qopt" onclick="answerQ('q2','b','correct')">B. Wait &mdash; the daily pullback may be setting up a long entry once the 1 bar resolves 2U</button>
+      <button class="qopt" onclick="answerQ('q2','c','wrong')">C. Ignore the monthly and weekly &mdash; only the daily matters</button>
+      <button class="qopt" onclick="answerQ('q2','d','wrong')">D. Take a long trade right now because the tide is green</button>
+    </div>
+    <div class="quiz-fb" id="q2-fb"></div>
+  </div>
+
+  <div class="cmp-area" id="ca2">
+    <button class="cmp-btn" onclick="markComplete(2)">Mark Complete &amp; Continue &rarr;</button>
+  </div>
+</div>
+
+<!-- ===================== MODULE 3 ===================== -->
+<div id="view-3" class="page">
+  <div class="mod-hdr">
+    <div class="mod-eyebrow"><span class="mod-big-icon">&#127919;</span><div><div class="mod-num">Module 3 of 5</div><div class="mod-title">Actionable Signals &amp; Patterns</div></div></div>
+    <div class="badge-row"><span class="badge">&#128337; ~12 min</span><span class="badge">Single bar &amp; combo signals</span><span class="badge">1 quiz</span><span class="done-badge" id="b3">&#10003; Completed</span></div>
+  </div>
+  <div class="mod-intro">Knowing the trend is half the job. The other half is knowing exactly <strong>when</strong> to enter. The STRAT uses a defined set of single-bar signals and multi-bar combo patterns to pinpoint entries with precision. Each signal has a mechanical definition, a stop level, and a target. No guessing.</div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 3.1</div>
+    <div class="lesson-title">Single Bar Signals: Hammers &amp; Shooters</div>
+    <span class="lesson-tag" style="background:#22c55e18;color:#15803d">Entry Triggers</span>
+    <div class="body-text">
+      <p>Single-bar signals are formed by the shape of a single candle. They tell you about the battle between buyers and sellers <em>within</em> one session and who won by the close.</p>
+      <p><strong>Hammer (Bullish Exhaustion):</strong> A candle with a very long lower wick and a small body positioned in the top third of the candle&rsquo;s total range. What happened: price dropped significantly during the session, but buyers stepped in aggressively and pushed it back up to close near the high. The long lower wick is the physical evidence of rejected selling pressure. Sellers tried. Buyers said no.</p>
+      <p>In STRAT terms, a Hammer is most powerful when: (1) it forms at a prior period&rsquo;s low or support level, (2) it occurs on a 2D bar that is part of a pullback in a larger uptrend, and (3) FTFC on higher timeframes is green. The combination of a Hammer candle at a structural level with FTFC green is one of the cleanest long setups in the system.</p>
+      <p><strong>Shooter (Bearish Exhaustion):</strong> The mirror image. A very long upper wick with the body in the bottom third of the range. Price spiked up aggressively but sellers overwhelmed buyers and slammed it back down. Bullish pressure was rejected. Shooting stars and Shooters are the same concept. The long upper wick is the evidence of failed buying pressure.</p>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title" style="color:#15803d">&#128296; Hammer Setup Rules</div>
+        <div class="card-body">Body in top 33% of range. Long lower wick. Occurs at support or prior lows. Best with FTFC green above. Stop: below the hammer&rsquo;s low. Target: next untaken pivot high.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#dc2626">&#128248; Shooter Setup Rules</div>
+        <div class="card-body">Body in bottom 33% of range. Long upper wick. Occurs at resistance or prior highs. Best with FTFC red above. Stop: above the shooter&rsquo;s high. Target: next untaken pivot low.</div>
+      </div>
+    </div>
+    <div class="box example">
+      <div class="box-label">&#128196; Momo Variation</div>
+      <div class="box-text"><p>When a Hammer or Shooter forms <em>mid-trend</em> (not at a reversal point), it is called a Momo Variation. It indicates a brief failed counter-attack by the opposing side, followed by immediate continuation. A Hammer mid-uptrend is a strong buy signal for continuation. Do not mistake it for a reversal &mdash; context determines whether it&rsquo;s a reversal or continuation signal.</p></div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 3.2</div>
+    <div class="lesson-title">Common Combos: Multi-Bar Patterns</div>
+    <span class="lesson-tag" style="background:#8b5cf618;color:#6d28d9">Patterns</span>
+    <div class="body-text">
+      <p>Multi-bar combos are sequences of 2&ndash;3 bar types that create high-probability entries. These are the bread-and-butter setups that STRAT traders look for every single day.</p>
+    </div>
+
+    <div class="lesson-label" style="margin-top:20px">2-2 Reversal</div>
+    <div class="body-text">
+      <p>The <strong>2-2 Reversal</strong> is the simplest and most elegant reversal signal. It consists of two consecutive Scenario 2 bars in <em>opposing directions</em>. First, a 2D bar forms (red, breaks prior low). Then, the very next bar becomes a 2U (breaks the 2D bar&rsquo;s high). This flip from down to up proves that control has physically shifted from sellers to buyers on that timeframe.</p>
+      <p>Why does this work? The 2D bar created a new low. Sellers pushed price down. But then the next bar came in and took out that 2D bar&rsquo;s high. That means buyers overcame everything the sellers achieved the prior session. The trade is &ldquo;in force&rdquo; the moment price crosses the 2D bar&rsquo;s high. Stop goes below the 2D bar&rsquo;s low. Target is the next untaken pivot above.</p>
+    </div>
+    <div class="box rule"><div class="box-label">&#128204; 2-2 Rule</div><div class="box-text"><p>Entry: when the new bar crosses the prior bar&rsquo;s high (for a bullish 2-2) or low (for a bearish 2-2). This is called the &ldquo;In Force&rdquo; moment. Do not enter before the cross. The setup is just a theory until price proves it by breaching the level.</p></div></div>
+
+    <div class="lesson-label" style="margin-top:24px">2-1-2 Continuation</div>
+    <div class="body-text">
+      <p>The <strong>2-1-2 Continuation</strong> is the STRAT&rsquo;s most reliable trend-following setup. The sequence: a Scenario 2 bar in the trend direction, followed by a Scenario 1 (inside bar, coil), followed by a Scenario 2 that breaks the 1 bar in the trend direction. This reads as: trend moves &rarr; market rests &rarr; trend resumes.</p>
+      <p>The 1 bar in the middle is the gift. It gives you a precise entry level (the 1 bar&rsquo;s high for longs, the 1 bar&rsquo;s low for shorts) and a precise stop level (the other side of the 1 bar). Your risk is defined by the size of the inside bar. The tighter the 1 bar, the better your risk-to-reward.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><div><div class="step-h">Identify the Trend (First 2 Bar)</div><div class="step-p">A 2U or 2D bar establishes the direction. This is your trend confirmation candle. It must be in alignment with FTFC on higher timeframes.</div></div></div>
+      <div class="step"><div class="step-n">2</div><div><div class="step-h">Wait for the Rest (1 Bar)</div><div class="step-p">The market pauses and forms a Scenario 1. This is your setup. Mark the 1 bar&rsquo;s high and low. These become your entry and stop levels. Set alerts at both levels.</div></div></div>
+      <div class="step"><div class="step-n">3</div><div><div class="step-h">Trade the Break (Second 2 Bar)</div><div class="step-p">When price breaks the 1 bar in the direction of the original trend, the setup is &ldquo;in force.&rdquo; Enter on the break. Stop is the other side of the 1 bar. Target is the next untaken pivot.</div></div></div>
+    </div>
+
+    <div class="lesson-label" style="margin-top:24px">3-1-2 Reversal</div>
+    <div class="body-text">
+      <p>The <strong>3-1-2 Reversal</strong> is the most powerful multi-bar reversal in the STRAT playbook. It starts with a Scenario 3 (Outside Bar) &mdash; a massive expansion candle that breaks both sides. After the chaos of the 3 bar, the market forms a Scenario 1 (compression, coil). Then, a Scenario 2 breaks the 1 bar in one direction.</p>
+      <p>Why is this so powerful? The 3 bar established a huge range &mdash; it is now the Mother Bar. The 1 bar compressed inside it. When the 2 bar breaks the 1, the target is the entire range of the 3 bar. If a bearish 3 bar formed (red, closed low), then a subsequent 1-2U setup targeting the TOP of the 3 bar is a massive risk-to-reward trade. You are risking the small range of the 1 bar to target the full range of the 3 bar.</p>
+    </div>
+    <div class="box example"><div class="box-label">&#128196; 3-1-2 Example</div><div class="box-text"><p>NVDA prints a huge red Scenario 3 bar: high $145, low $125 (a $20 range). Next session is a Scenario 1: high $132, low $128. Then the following session breaks above $132 (2U). Your entry is $132.01. Your stop is $127.99 (below the 1 bar). Your target is $145 (top of the 3 bar). Risk: $4. Reward: $13. That is a 3.25:1 risk-to-reward trade with a mechanical basis.</p></div></div>
+
+    <div class="lesson-label" style="margin-top:24px">RevStrat (1-2-2)</div>
+    <div class="body-text">
+      <p>The <strong>RevStrat</strong> is the trap-based reversal. The setup: a Scenario 1 (consolidation), followed by a Scenario 2 in one direction that traps breakout traders, followed by a Scenario 2 in the <em>opposite</em> direction that triggers all those trapped stops. The psychology: breakout traders saw the 1 bar and placed orders to buy the breakout above the 1 bar&rsquo;s high. Price did break out (2U). They are now long. Then price reverses hard and becomes a 2D through the 1 bar&rsquo;s low. Every trapped long is now stopped out. Their stop-loss sell orders become the fuel for the downside move.</p>
+    </div>
+    <div class="box warn"><div class="box-label">&#9888; RevStrat Context</div><div class="box-text"><p>The RevStrat requires FTFC conflict or reversal to be worth trading. If the monthly and weekly are both green, a RevStrat to the downside on the daily is likely just a pullback, not a true reversal. FTFC confirmation is essential &mdash; the highest-probability RevStrats occur when higher timeframes are also shifting direction.</p></div></div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="quiz">
+    <div class="quiz-hdr">&#127947; Knowledge Check &mdash; Module 3</div>
+    <div class="quiz-q">You see a daily chart with an uptrending stock. Yesterday was a 2U bar. Today, the stock formed an Inside Bar (Scenario 1). What is your exact plan for tomorrow?</div>
+    <div class="quiz-opts">
+      <button class="qopt" onclick="answerQ('q3','a','wrong')">A. Buy immediately at the open &mdash; the trend is up so you should always be long</button>
+      <button class="qopt" onclick="answerQ('q3','b','correct')">B. Set an alert at the 1 bar&rsquo;s high &mdash; if tomorrow breaks it (2U), enter long with a stop below the 1 bar&rsquo;s low. This is a 2-1-2 continuation setup.</button>
+      <button class="qopt" onclick="answerQ('q3','c','wrong')">C. Sell short because an Inside Bar means the trend is reversing</button>
+      <button class="qopt" onclick="answerQ('q3','d','wrong')">D. Wait for a week to see what happens before doing anything</button>
+    </div>
+    <div class="quiz-fb" id="q3-fb"></div>
+  </div>
+
+  <div class="cmp-area" id="ca3">
+    <button class="cmp-btn" onclick="markComplete(3)">Mark Complete &amp; Continue &rarr;</button>
+  </div>
+</div>
+
+<!-- ===================== MODULE 4 ===================== -->
+<div id="view-4" class="page">
+  <div class="mod-hdr">
+    <div class="mod-eyebrow"><span class="mod-big-icon">&#128260;</span><div><div class="mod-num">Module 4 of 5</div><div class="mod-title">Advanced Patterns: PMG, Kicking &amp; TTO</div></div></div>
+    <div class="badge-row"><span class="badge">&#128337; ~10 min</span><span class="badge">3 advanced concepts</span><span class="badge">1 quiz</span><span class="done-badge" id="b4">&#10003; Completed</span></div>
+  </div>
+  <div class="mod-intro">Once you can read bar types and identify the basic combos, you unlock the advanced layer of the STRAT. These patterns &mdash; the Pivot Machine Gun, the Kicking Pattern, and Triangle They Out &mdash; represent the highest-conviction setups in the system. They are rarer, but when they appear with FTFC alignment, they offer explosive potential.</div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 4.1</div>
+    <div class="lesson-title">Pivot Machine Gun (PMG)</div>
+    <span class="lesson-tag" style="background:#ef444418;color:#be123c">Advanced</span>
+    <div class="body-text">
+      <p>The <strong>Pivot Machine Gun</strong> is one of the most visually striking setups in The STRAT. To understand it, you need to understand &ldquo;untaken pivots.&rdquo; Every swing high and swing low on a chart is a pivot. Most traders place their stop-loss orders just beyond these pivots. When price approaches a pivot, it is approaching a cluster of stop-loss orders.</p>
+      <p>A PMG forms when you have a series of consecutive bars trending in one direction &mdash; say, six consecutive 2D bars. Each 2D bar created a new swing high (the high of each of those bars). Those swing highs are now six consecutive untaken pivots sitting above price. This creates a &ldquo;machine gun&rdquo; of stop-loss orders pointing upward.</p>
+      <p>Here is the explosive part: if price reverses and starts moving up, it hits the first stop-loss cluster. Those orders are market buy orders. This buying pushes price immediately to the next pivot. That next pivot also triggers stop-loss buy orders. And the next. And the next. The pivots act like dominos, each cluster fueling the move to the next. This chain reaction creates a rapid, explosive momentum move that takes out all the previous pivots in rapid succession &mdash; like a machine gun mowing through targets.</p>
+    </div>
+    <div class="box key">
+      <div class="box-label">&#128273; How to Trade the PMG</div>
+      <div class="box-text">
+        <p><strong>Setup:</strong> Find a series of 4+ consecutive directional bars leaving clean, untaken pivots in one direction.</p>
+        <p><strong>Entry:</strong> Wait for the first reversal signal (Hammer, 2-2, or 2-1-2) against the trend direction with FTFC alignment.</p>
+        <p><strong>Target:</strong> The PMG targets ALL the untaken pivots in sequence. Your first target is the most recent pivot. After that is taken, trail your stop and let it run through each subsequent pivot.</p>
+        <p><strong>Stop:</strong> Below the entry bar&rsquo;s low (structural stop). If the first pivot doesn&rsquo;t get taken, the PMG setup has failed.</p>
+      </div>
+    </div>
+    <div class="box example"><div class="box-label">&#128196; PMG Example</div><div class="box-text"><p>BTC has had 5 consecutive red daily 2D bars. Each bar&rsquo;s high sits above the next: $87k, $85k, $83k, $81k, $79k. Today a Hammer candle forms at a key weekly support level with the weekly chart green. This is a PMG setup. Entry: above the Hammer&rsquo;s high. Stop: below the Hammer&rsquo;s low. The targets are $81k, $83k, $85k, $87k in sequence as each previous pivot is taken out by rising price.</p></div></div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 4.2</div>
+    <div class="lesson-title">The Kicking Pattern (Gap Reversals)</div>
+    <span class="lesson-tag" style="background:#f59e0b18;color:#b45309">High Velocity</span>
+    <div class="body-text">
+      <p>The <strong>Kicking Pattern</strong> is the most violent, high-velocity reversal in The STRAT. It is defined by an overnight gap that completely rejects the prior session&rsquo;s direction. Here is how it forms:</p>
+      <p>Day 1 closes as a 2D bar (red, bearish). Overnight &mdash; due to earnings, news, or institutional repositioning &mdash; the stock gaps <em>up</em> significantly at the open. Day 2 opens above Day 1&rsquo;s high, creating an immediate 2U bar from the very first tick. There is no overlap between the two days&rsquo; price ranges. The gap is the &ldquo;kick.&rdquo;</p>
+      <p>The psychology is extreme: every single person who sold short during Day 1 is now underwater instantly at the open. They are all trapped. Every one of their stop-loss orders is triggered simultaneously the moment the market opens. This forced mass buying at the open, combined with new buyers attracted by the gap, creates extreme upside velocity. There is almost no resistance because the gap itself skipped over all the sellers.</p>
+      <p>A <strong>Bearish Kicking Pattern</strong> is the inverse: a green 2U day followed by a gap down at the open that immediately creates a 2D bar. All longs from the prior day are trapped instantly.</p>
+    </div>
+    <div class="box danger"><div class="box-label">&#128683; Kicking Pattern Caution</div><div class="box-text"><p>Kicking Patterns are best observed and traded on the open. The entry is the gap fill direction &mdash; you are buying the gap open itself, not waiting for a pullback. These moves happen fast. If you miss the initial entry, do not chase. Wait for the first 15-minute 1 bar to form and then trade the break in the kick direction.</p></div></div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 4.3</div>
+    <div class="lesson-title">Triangle They Out (TTO)</div>
+    <span class="lesson-tag" style="background:#6366f118;color:#4338ca">Trap Pattern</span>
+    <div class="body-text">
+      <p><strong>Triangle They Out</strong> (TTO) is a pattern that describes what happens when a traditional technical analysis pattern &mdash; specifically a symmetrical triangle &mdash; is used to trap retail traders before a major move in the opposite direction. It is called &ldquo;They Out&rdquo; because the institutional players (they) use the pattern to shake out (out) the retail crowd.</p>
+      <p>A symmetrical triangle forms when you have converging trendlines &mdash; lower highs and higher lows, compressing price into a tight apex. Retail traders are taught to buy the breakout above the upper trendline. In a TTO, price does break above that trendline (a 2U breakout), triggering all the retail buy orders. The move looks convincing for a brief moment.</p>
+      <p>Then price immediately reverses with extreme aggression, breaking back through the triangle and then breaking the lower trendline. All those retail breakout buyers are now trapped with losses. Their stop-losses fuel the real move downward. The triangle was a trap designed to collect retail orders before the institutional move occurred in the opposite direction.</p>
+      <p>In STRAT terms, the TTO is identified by: a 1-bar or triangle consolidation on the chart, a brief 2U break that quickly reverses into a 2D (or a 3 bar), followed by an aggressive move down that creates a PMG of trapped stop-losses. FTFC conflict (higher timeframes bearish while price briefly looked bullish on the entry timeframe) often precedes a TTO.</p>
+    </div>
+    <div class="box warn"><div class="box-label">&#9888; Protecting Yourself from TTO</div><div class="box-text"><p>The TTO is why FTFC matters so much. A breakout that conflicts with the higher timeframe FTFC is a candidate to be a TTO. Before buying any breakout, confirm that the Tide and Wave are aligned. If they are not, what looks like a breakout may be a trap. The STRAT&rsquo;s rule: a setup that conflicts with FTFC is not a setup &mdash; it is a lottery ticket.</p></div></div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="quiz">
+    <div class="quiz-hdr">&#127947; Knowledge Check &mdash; Module 4</div>
+    <div class="quiz-q">A stock has printed 5 consecutive 2D daily bars. Today a Hammer candle forms at the lowest point, and the Weekly chart is a 2U (green). What advanced pattern is setting up, and what is your entry plan?</div>
+    <div class="quiz-opts">
+      <button class="qopt" onclick="answerQ('q4','a','wrong')">A. Triangle They Out &mdash; this is a trap, do not buy</button>
+      <button class="qopt" onclick="answerQ('q4','b','wrong')">B. Kicking Pattern &mdash; wait for a gap up tomorrow to confirm</button>
+      <button class="qopt" onclick="answerQ('q4','c','correct')">C. Pivot Machine Gun &mdash; enter above the Hammer&rsquo;s high with a stop below its low, targeting each prior 2D bar&rsquo;s high in sequence</button>
+      <button class="qopt" onclick="answerQ('q4','d','wrong')">D. RevStrat &mdash; the 5 down days are a reversal signal on their own</button>
+    </div>
+    <div class="quiz-fb" id="q4-fb"></div>
+  </div>
+
+  <div class="cmp-area" id="ca4">
+    <button class="cmp-btn" onclick="markComplete(4)">Mark Complete &amp; Continue &rarr;</button>
+  </div>
+</div>
+
+<!-- ===================== MODULE 5 ===================== -->
+<div id="view-5" class="page">
+  <div class="mod-hdr">
+    <div class="mod-eyebrow"><span class="mod-big-icon">&#128737;</span><div><div class="mod-num">Module 5 of 5</div><div class="mod-title">Execution &amp; Risk Management</div></div></div>
+    <div class="badge-row"><span class="badge">&#128337; ~10 min</span><span class="badge">The Trigger, Magnitude &amp; Risk Rules</span><span class="badge">1 quiz</span><span class="done-badge" id="b5">&#10003; Completed</span></div>
+  </div>
+  <div class="mod-intro">Knowing what to trade is only half the game. The other half is <strong>how to execute</strong>: when exactly to enter, where to place your stop, how to size your position, and what your target is before you ever touch the order button. This module converts your STRAT knowledge into a mechanical execution system.</div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 5.1</div>
+    <div class="lesson-title">The Trigger: In Force &mdash; Physical Price Break</div>
+    <span class="lesson-tag" style="background:#22c55e18;color:#15803d">Execution</span>
+    <div class="body-text">
+      <p>One of the most important concepts in The STRAT is the phrase <strong>&ldquo;In Force.&rdquo;</strong> A setup is just a theory until the trigger is breached. Until that moment, you have no trade &mdash; you have a plan. This distinction saves accounts.</p>
+      <p><strong>In Force: Physical price break</strong> means a trade becomes active the moment price physically crosses the structural level that defines the setup. For a 2-1-2 long, that level is the 1 bar&rsquo;s high. For a 2-2 bullish reversal, it&rsquo;s the first bar&rsquo;s high. For a Hammer, it&rsquo;s the Hammer candle&rsquo;s high on the following bar.</p>
+      <p>Why does this matter? Because entering before the break is predicting, not trading. The market owes you nothing. Price may consolidate further, reverse entirely, or do nothing for days. The moment you enter before a trigger is breached, you are placing a bet based on hope. STRAT traders do not predict &mdash; they wait for the market to prove the move, then participate.</p>
+      <p><strong>Entry at prior high/low</strong> is the specific mechanics. Your entry order is placed as a stop order (buy stop for longs, sell stop for shorts) at the exact level of the trigger. This means the trade only executes if price actually reaches and crosses that level. You are letting the market come to you.</p>
+    </div>
+    <div class="box rule"><div class="box-label">&#128204; The In Force Rule</div><div class="box-text"><p>Place your entry as a <strong>stop order</strong> at the trigger level before the session begins. If the market never reaches it, you never trade. If it does, you&rsquo;re in at exactly the right price. This is the professional way to execute setups &mdash; not watching the screen and reacting emotionally to every tick.</p></div></div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 5.2</div>
+    <div class="lesson-title">Magnitude: Setting Your Targets</div>
+    <span class="lesson-tag" style="background:#0ea5e918;color:#0369a1">Targets</span>
+    <div class="body-text">
+      <p><strong>Magnitude</strong> is the STRAT term for your price target. Unlike traditional target-setting methods that use arbitrary percentages or fixed dollar amounts, STRAT targets are mechanical and objective &mdash; they are always the next untaken pivot or the boundary of a Broadening Formation.</p>
+      <p><strong>Distance to next pivot:</strong> After entering a long trade, your first target is the nearest untaken swing high above your entry. Why? Because swing highs are where previous sellers offloaded supply. When price returns to that level, it will face natural resistance. That resistance is your first profit-taking area. If price pushes through it (becoming a new 2U on that timeframe), the next untaken pivot above becomes your next target.</p>
+      <p><strong>Broadening Formation boundaries:</strong> On the higher timeframes, the upper and lower trendlines of Broadening Formations serve as your macro targets. If you enter a long on the daily chart and the weekly Broadening Formation upper trendline is $50 above your entry, that upper trendline is your maximum target &mdash; the level at which you absolutely take profits regardless of how bullish the setup looks.</p>
+    </div>
+    <div class="tbl">
+      <tr><th>Setup Type</th><th>First Target</th><th>Second Target</th><th>Maximum Target</th></tr>
+      <tr><td>2-1-2 Continuation</td><td>Prior swing high</td><td>Next untaken pivot</td><td>BF upper trendline</td></tr>
+      <tr><td>3-1-2 Reversal</td><td>Midpoint of 3 bar</td><td>Top/bottom of 3 bar</td><td>Next weekly pivot</td></tr>
+      <tr><td>PMG</td><td>First prior pivot</td><td>Each subsequent pivot</td><td>All pivots cleared</td></tr>
+      <tr><td>2-2 Reversal</td><td>Prior swing high</td><td>Weekly level</td><td>BF boundary</td></tr>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="lesson">
+    <div class="lesson-label">Lesson 5.3</div>
+    <div class="lesson-title">Risk Rules: Structural Stops, the 50% Rule &amp; Position Sizing</div>
+    <span class="lesson-tag" style="background:#ef444418;color:#be123c">Risk Management</span>
+    <div class="body-text">
+      <p><strong>Structural Stops</strong> are the cornerstone of STRAT risk management. The rule: your stop-loss is placed on the other side of the trigger bar &mdash; always. Not at a round number. Not at a comfortable dollar amount. At the structural level that, if broken, mathematically proves your trade idea was wrong.</p>
+      <p>For a long entry triggered by a Hammer candle, your stop goes below the Hammer&rsquo;s low. Why? Because if price returns below the Hammer&rsquo;s low, the Hammer is invalidated. Buyers who stepped in at that low are now losing. The setup no longer exists. Holding through that level is not discipline &mdash; it is denial. Cut it immediately and move on.</p>
+      <p><strong>The 50% Retracement Rule:</strong> When a Scenario 2 bar retraces more than 50% of its total range, it is showing signs of transitioning into a Scenario 3. This is an early warning system. If you are in a trade and the current bar has already retraced 50% of its range against you, begin thinking about tightening your stop or reducing size. A 2 bar that retraces 50% often becomes a 3, and a 3 that closes against your position can be very damaging.</p>
+      <p><strong>Volatility-Adjusted Sizing:</strong> Position size in The STRAT is always determined by your structural stop distance, not by a fixed number of shares. The formula: (Account Risk per Trade) divided by (Distance from Entry to Stop) equals your position size. If your account allows $200 risk per trade and your stop is $4 away, you trade 50 shares. If the stop is $0.50 away, you trade 400 shares. The dollar risk stays constant &mdash; the number of shares adjusts to match the volatility of the setup.</p>
+    </div>
+    <div class="box danger"><div class="box-label">&#128683; The Three Laws of STRAT Risk</div><div class="box-text">
+      <p><strong>Law 1:</strong> Never move your stop away from price. Widening your stop is not risk management &mdash; it is hope. If the structural level is hit, the trade is over.</p>
+      <p><strong>Law 2:</strong> Never risk more than your predetermined amount per trade. Size down, never up, when you are unsure.</p>
+      <p><strong>Law 3:</strong> Never add to a losing position. If price is going against you, your read was wrong. Adding to the trade increases exposure to a losing idea.</p>
+    </div></div>
+
+    <div class="lesson-label" style="margin-top:28px">Lesson 5.4</div>
+    <div class="lesson-title">The No-No Zone: Three Rules Every STRAT Trader Lives By</div>
+    <div class="body-text">
+      <p>The STRAT&rsquo;s &ldquo;No-No Zone&rdquo; refers to three specific situations where the probability of loss is structurally elevated and no trade should be taken regardless of how good the setup looks.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-n" style="background:#ef4444">1</div><div><div class="step-h">Never Trade a Forming Inside Bar (1 Bar)</div><div class="step-p">A 1 bar is a coil. You do not know which direction it will break. Entering inside the 1 bar range is guessing the resolution before it happens. Wait for the break. Always.</div></div></div>
+      <div class="step"><div class="step-n" style="background:#ef4444">2</div><div><div class="step-h">Never Fight Full Time Frame Continuity</div><div class="step-p">If the Monthly, Weekly, and Daily are all red, do not look for long trades on the 15-minute chart. You are swimming against the institutional tide. Even if your micro setup looks perfect, you are fighting the largest players in the market.</div></div></div>
+      <div class="step"><div class="step-n" style="background:#ef4444">3</div><div><div class="step-h">Never Trade Inside a Forming Scenario 3</div><div class="step-p">A 3 bar is violent, two-directional price discovery. The range is expanding in real time. Entering during a 3 bar means you will get whipsawed. Wait for it to close, identify which side it closed on, then trade the following bar&rsquo;s break.</div></div></div>
+    </div>
+
+    <div class="lesson-label" style="margin-top:28px">Lesson 5.5</div>
+    <div class="lesson-title">The Daily Routine: 4 Steps Before Every Session</div>
+    <div class="body-text"><p>Every professional STRAT trader follows the same 4-step pre-market routine. This process takes 15&ndash;30 minutes and ensures you never walk into a trading session without a clear, objective game plan.</p></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><div><div class="step-h">Check FTFC Across All Timeframes</div><div class="step-p">Open your watchlist tickers. For each one, check Monthly, Weekly, Daily, and Hourly bar types. Record the color (green 2U or red 2D) for each. This gives you your directional bias for the day.</div></div></div>
+      <div class="step"><div class="step-n">2</div><div><div class="step-h">Scan for Setups</div><div class="step-p">Look for 1 bars (coils ready to break), Hammers or Shooters at key levels, or stocks where all timeframes are aligned. These are your A+ candidates. Build a shortlist.</div></div></div>
+      <div class="step"><div class="step-n">3</div><div><div class="step-h">Map the Schematic</div><div class="step-p">For each candidate, define: entry level (the trigger), stop level (structural, other side of setup bar), and target (next untaken pivot or Broadening Formation boundary). Calculate position size based on your stop distance.</div></div></div>
+      <div class="step"><div class="step-n">4</div><div><div class="step-h">Set Alerts and Wait</div><div class="step-p">Place your entry orders as stop orders at the trigger levels. Set alerts if you prefer. Then close your chart and let the market come to you. Do not watch tick by tick. The setup is either in force or it isn&rsquo;t.</div></div></div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="quiz">
+    <div class="quiz-hdr">&#127947; Knowledge Check &mdash; Module 5</div>
+    <div class="quiz-q">You enter a long trade on a 2-1-2 setup. Your entry is $50.00 and your structural stop (below the 1 bar&rsquo;s low) is $48.50. Your account allows $150 risk per trade. How many shares should you buy?</div>
+    <div class="quiz-opts">
+      <button class="qopt" onclick="answerQ('q5','a','wrong')">A. 100 shares &mdash; always buy round numbers</button>
+      <button class="qopt" onclick="answerQ('q5','b','wrong')">B. 50 shares &mdash; divide account size by share price</button>
+      <button class="qopt" onclick="answerQ('q5','c','correct')">C. 100 shares &mdash; $150 risk divided by $1.50 stop distance = 100 shares</button>
+      <button class="qopt" onclick="answerQ('q5','d','wrong')">D. 200 shares &mdash; the setup looks strong so size up</button>
+    </div>
+    <div class="quiz-fb" id="q5-fb"></div>
+  </div>
+
+  <div class="cmp-area" id="ca5">
+    <button class="cmp-btn" onclick="markComplete(5)">&#127881; Finish Course &amp; Go to P&amp;L Tracker</button>
+  </div>
+</div>
+
+<!-- ===================== PNL TRACKER ===================== -->
+<div id="view-pnl" class="pnl-page">
+  <div class="pnl-toprow">
+    <div>
+      <div class="pnl-title-row"><span style="font-size:24px">&#128202;</span><h1 class="pnl-h">P&amp;L Tracker</h1></div>
+      <p class="pnl-sub">Log every trade. Track every setup. Review every lesson.</p>
+    </div>
+    <button class="log-btn" id="form-toggle" onclick="toggleForm()">+ Log Trade</button>
+  </div>
+
+  <div id="trade-form" style="display:none">
+    <div class="form-box">
+      <div class="form-ttl">New Trade Entry</div>
+      <div class="g3">
+        <div class="ff"><label>Date</label><input type="date" id="fd"/></div>
+        <div class="ff"><label>Ticker</label><input type="text" id="ftk" placeholder="NVDA, SPX, BTC..."/></div>
+        <div class="ff"><label>Direction</label><select id="fdir"><option>Long</option><option>Short</option></select></div>
+      </div>
+      <div class="g2">
+        <div class="ff"><label>Setup Type</label><select id="fset"><option>2-1-2 Continuation</option><option>2-2 Reversal</option><option>3-1-2 Reversal</option><option>RevStrat (1-2-2)</option><option>Hammer</option><option>Shooter</option><option>PMG</option><option>Kicking Pattern</option><option>Triangle They Out</option><option>Other</option></select></div>
+        <div class="ff"><label>Session</label><select id="fses"><option>Pre-Market</option><option>Morning Open (9:30-11)</option><option>Midday</option><option>Power Hour (3-4pm)</option><option>After-Hours</option></select></div>
+      </div>
+      <div class="g3">
+        <div class="ff"><label>Entry Price</label><input type="number" id="fen" placeholder="0.00" step="0.01"/></div>
+        <div class="ff"><label>Exit Price</label><input type="number" id="fex" placeholder="0.00" step="0.01"/></div>
+        <div class="ff"><label>Shares / Size</label><input type="number" id="fsz" placeholder="1" step="any"/></div>
+      </div>
+      <div class="g2">
+        <div class="ff"><label>FTFC Status</label><select id="fftfc"><option>Full Green Stack</option><option>Full Red Stack</option><option>Mixed / Conflicted</option><option>Not Checked</option></select></div>
+        <div class="ff"><label>Result</label><select id="fres"><option>Win</option><option>Loss</option><option>Breakeven</option></select></div>
+      </div>
+      <div class="ff" style="margin-bottom:12px"><label>Notes / Lesson Learned</label><textarea id="fnts" placeholder="What did you see? What went right or wrong? What would you do differently?"></textarea></div>
+      <div id="pv" style="display:none" class="prev-box">Estimated P&amp;L:&nbsp;<span class="val" id="pvv"></span></div>
+      <button class="add-btn" onclick="addTrade()">Add Trade &rarr;</button>
+    </div>
+  </div>
+
+  <div class="stats-row" id="stats-row"></div>
+
+  <div class="tbl-box">
+    <div class="tbl-hdr">
+      <div class="tbl-htitle">Trade Log</div>
+      <div class="fbtns">
+        <button class="fbtn active" onclick="setFilter('All',this)">All</button>
+        <button class="fbtn" onclick="setFilter('Long',this)">Long</button>
+        <button class="fbtn" onclick="setFilter('Short',this)">Short</button>
+        <button class="fbtn" onclick="setFilter('Win',this)">Wins</button>
+        <button class="fbtn" onclick="setFilter('Loss',this)">Losses</button>
+      </div>
+    </div>
+    <div id="trade-table-wrap"></div>
+  </div>
+</div>
+
+</div><!-- end main -->
+</div><!-- end app -->
+
+<script>
+var completed=[];
+var filter='All';
+var formOpen=false;
+var trades=[
+  {id:'t1',date:'2025-04-08',ticker:'NVDA',setup:'2-1-2 Continuation',session:'Morning Open (9:30-11)',direction:'Long',entry:128.50,exit:132.80,size:10,ftfc:'Full Green Stack',result:'Win',notes:'Clean 2-1-2 on 15m. FTFC green all the way. Hammer formed on the 1 bar, entered break of high.'},
+  {id:'t2',date:'2025-04-09',ticker:'SPX',setup:'Hammer',session:'Morning Open (9:30-11)',direction:'Long',entry:5210,exit:5195,size:1,ftfc:'Mixed / Conflicted',result:'Loss',notes:'Daily was green but weekly was red. Fought FTFC. Should have skipped this one.'},
+  {id:'t3',date:'2025-04-10',ticker:'BTC',setup:'RevStrat (1-2-2)',session:'Pre-Market',direction:'Short',entry:84500,exit:82100,size:0.1,ftfc:'Full Red Stack',result:'Win',notes:'1-2-2 setup on daily. Monthly turned red, weekly red, daily red. PMG developing. Clean.'}
+];
+document.getElementById('fd').value=new Date().toISOString().slice(0,10);
+['fen','fex','fsz','fdir'].forEach(function(id){document.getElementById(id).addEventListener('input',prevPnl);});
+function prevPnl(){
+  var e=parseFloat(document.getElementById('fen').value);
+  var x=parseFloat(document.getElementById('fex').value);
+  var s=parseFloat(document.getElementById('fsz').value);
+  var d=document.getElementById('fdir').value;
+  if(e&&x&&s){
+    var p=((x-e)*(d==='Short'?-1:1)*s);
+    var el=document.getElementById('pvv');
+    el.textContent='$'+(p>=0?'+':'')+p.toFixed(2);
+    el.style.color=p>=0?'#22c55e':'#ef4444';
+    document.getElementById('pv').style.display='flex';
+  }else{document.getElementById('pv').style.display='none';}
+}
+function showView(id){
+  document.querySelectorAll('.page,.pnl-page').forEach(function(v){v.classList.remove('active');});
+  var el=document.getElementById('view-'+id);
+  if(el){el.classList.add('active');}
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',b.dataset.view===id);});
+  document.getElementById('main').scrollTop=0;
+  if(id==='pnl'){renderStats();renderTable();}
+}
+function updateProgress(){
+  var pct=Math.round((completed.length/5)*100);
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-pct').style.color=pct===100?'#22c55e':'#111827';
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('prog-bar').style.background=pct===100?'#22c55e':'#111827';
+  document.getElementById('prog-sub').textContent=completed.length+' of 5 modules complete';
+}
+function markComplete(n){
+  if(completed.indexOf(n)===-1)completed.push(n);
+  document.getElementById('ck'+n).style.display='inline';
+  var b=document.getElementById('b'+n);if(b)b.style.display='inline';
+  var ca=document.getElementById('ca'+n);
+  ca.innerHTML='<div style="display:flex;align-items:center;gap:10px;color:#15803d;font-weight:600;font-size:14px;padding:14px 18px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0">&#9989; Module complete!'+(n<5?' Continue to the next module in the sidebar.':'  You finished the entire course!')+'</div>';
+  updateProgress();
+  if(n<5)setTimeout(function(){showView(String(n+1));},400);
+  else setTimeout(function(){showView('pnl');},400);
+}
+var qAnswered={};
+var qFeedback={
+  'q1':{'correct':'Correct! Today took out both the prior high (5,250) and the prior low (5,180), so it is a Scenario 3 (Outside Bar). Both buyers AND sellers were aggressive enough to explore new territory in both directions during the session.','wrong':'Not quite. Check both the high and low. Today\'s high of 5,270 exceeded the prior high of 5,250. Today\'s low of 5,160 went below the prior low of 5,180. BOTH sides were breached, making this a Scenario 3 (Outside Bar).'},
+  'q2':{'correct':'Correct! The Tide (Monthly + Weekly) is green, so your bias is bullish. The daily 2D is just a pullback within that uptrend. The 1 bar on the 60-min is your coil. If tomorrow the 1 bar breaks 2U, that is a 2-1-2 continuation long with FTFC fully aligned. That is the trade you want.','wrong':'Think about FTFC. The monthly and weekly are both green. That is the Tide. A daily pullback (2D) within a green Tide is normal. You do not short it just because the daily went red. You wait for the pullback to set up a re-entry long. The 1 bar on the 60-min is the coil before the next move.'},
+  'q3':{'correct':'Correct! This is a textbook 2-1-2 continuation setup. The 2U bar confirmed the uptrend. The Inside Bar (1) created the coil. Tomorrow if price breaks the 1 bar\'s high, that is your 2U entry trigger. Stop goes below the 1 bar\'s low. Target is the next swing high above.','wrong':'Think about what the 1 bar represents in a 2-1-2 setup. The prior 2U confirmed the trend. The 1 bar is the rest period &mdash; the coil. The correct play is to wait for the break of the 1 bar in the trend direction. That break becomes the second 2, completing the 2-1-2. Enter on the break, stop below the 1 bar.'},
+  'q4':{'correct':'Correct! Five consecutive 2D bars have left five untaken pivot highs above price. A Hammer at the low with weekly FTFC green is the reversal signal. This is a Pivot Machine Gun setup. Each prior bar\'s high becomes a domino target as the reversal move triggers each cluster of stop-loss orders.','wrong':'Five consecutive 2D bars leaving untaken pivot highs above price, with a Hammer forming at support while the weekly is green &mdash; this is the classic Pivot Machine Gun setup. The PMG is defined by multiple untaken pivots in the same direction that will get triggered in a chain reaction if a reversal occurs.'},
+  'q5':{'correct':'Correct! Volatility-adjusted sizing: $150 account risk divided by $1.50 stop distance (entry $50.00 minus stop $48.50) equals exactly 100 shares. This way your maximum loss on this trade is $150 regardless of how many shares you traded.','wrong':'The STRAT uses volatility-adjusted sizing. You never pick shares based on round numbers or gut feel. The formula: Account Risk Per Trade ÷ Stop Distance = Shares. Here: $150 ÷ $1.50 = 100 shares. This keeps your dollar risk constant across every setup regardless of the stock\'s price or volatility.'}
+};
+function answerQ(qid,opt,type){
+  if(qAnswered[qid])return;
+  qAnswered[qid]=true;
+  var opts=document.querySelectorAll('[onclick*="\''+qid+'\'"]');
+  opts.forEach(function(o){
+    o.disabled=true;
+    var oc=o.getAttribute('onclick');
+    if(oc.indexOf("'correct'")>-1)o.className='qopt correct';
+    else if(oc===o.getAttribute('onclick')&&type==='wrong'&&oc.indexOf("'"+opt+"'")>-1)o.className='qopt wrong';
+  });
+  var fb=document.getElementById(qid+'-fb');
+  fb.className='quiz-fb show '+(type==='correct'?'c':'w');
+  fb.textContent=type==='correct'?qFeedback[qid]['correct']:qFeedback[qid]['wrong'];
+}
+function toggleForm(){
+  formOpen=!formOpen;
+  document.getElementById('trade-form').style.display=formOpen?'block':'none';
+  var btn=document.getElementById('form-toggle');
+  btn.textContent=formOpen?'Cancel':'+ Log Trade';
+  btn.className='log-btn'+(formOpen?' cancel':'');
+}
+function calcPnl(t){return((parseFloat(t.exit)-parseFloat(t.entry))*(t.direction==='Short'?-1:1)*parseFloat(t.size));}
+function fmtP(n){return(n>=0?'+':'')+n.toFixed(2);}
+function clr(n){return n>=0?'#22c55e':'#ef4444';}
+function addTrade(){
+  var tk=document.getElementById('ftk').value.trim().toUpperCase();
+  var en=parseFloat(document.getElementById('fen').value);
+  var ex=parseFloat(document.getElementById('fex').value);
+  var sz=parseFloat(document.getElementById('fsz').value);
+  if(!tk||!en||!ex||!sz){alert('Please fill in Ticker, Entry, Exit, and Size.');return;}
+  trades.push({id:'t'+Date.now(),date:document.getElementById('fd').value,ticker:tk,setup:document.getElementById('fset').value,session:document.getElementById('fses').value,direction:document.getElementById('fdir').value,entry:en,exit:ex,size:sz,ftfc:document.getElementById('fftfc').value,result:document.getElementById('fres').value,notes:document.getElementById('fnts').value});
+  ['ftk','fen','fex','fsz','fnts'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('pv').style.display='none';
+  toggleForm();renderStats();renderTable();
+}
+function delTrade(id){trades=trades.filter(function(t){return t.id!==id;});renderStats();renderTable();}
+function setFilter(f,btn){
+  filter=f;
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');renderTable();
+}
+function renderStats(){
+  var ps=trades.map(calcPnl);
+  var total=ps.reduce(function(a,b){return a+b;},0);
+  var wins=trades.filter(function(t){return t.result==='Win';}).length;
+  var losses=trades.filter(function(t){return t.result==='Loss';}).length;
+  var wr=trades.length?Math.round((wins/trades.length)*100):0;
+  var best=ps.length?Math.max.apply(null,ps):0;
+  var worst=ps.length?Math.min.apply(null,ps):0;
+  var avgW=wins>0?(ps.filter(function(p){return p>0;}).reduce(function(a,b){return a+b;},0)/wins):0;
+  var avgL=losses>0?(ps.filter(function(p){return p<0;}).reduce(function(a,b){return a+b;},0)/losses):0;
+  document.getElementById('stats-row').innerHTML=
+    sc('Total P&L','$'+fmtP(total),null,clr(total))+
+    sc('Win Rate',wr+'%',wins+'W / '+losses+'L',wr>=50?'#22c55e':'#ef4444')+
+    sc('Avg Win','$'+fmtP(avgW),null,'#22c55e')+
+    sc('Avg Loss','$'+fmtP(avgL),null,'#ef4444')+
+    sc('Best Trade','$'+fmtP(best),null,'#22c55e')+
+    sc('Total Trades',trades.length,null,'#111827');
+}
+function sc(l,v,s,c){return'<div class="sc"><div class="sc-lbl">'+l+'</div><div class="sc-val" style="color:'+c+'">'+v+'</div>'+(s?'<div class="sc-sub">'+s+'</div>':'')+'</div>';}
+function renderTable(){
+  var fl=filter==='Win'?trades.filter(function(t){return t.result==='Win';}):filter==='Loss'?trades.filter(function(t){return t.result==='Loss';}):filter==='All'?trades:trades.filter(function(t){return t.direction===filter;});
+  var w=document.getElementById('trade-table-wrap');
+  if(!fl.length){w.innerHTML='<div class="empty">No trades logged yet. Hit &ldquo;+ Log Trade&rdquo; to start building your journal.</div>';return;}
+  var rows=fl.map(function(t){
+    var p=calcPnl(t);
+    var rb=t.result==='Win'?'style="color:#15803d;font-weight:600"':t.result==='Loss'?'style="color:#dc2626;font-weight:600"':'style="color:#6b7280"';
+    return'<tr><td style="color:#6b7280">'+t.date+'</td><td style="font-weight:700">'+t.ticker+'</td><td style="color:#374151">'+t.setup+'</td><td style="color:#6b7280;font-size:11px">'+t.session+'</td><td><span class="db '+(t.direction==='Long'?'long':'short')+'">'+t.direction+'</span></td><td class="mono">$'+parseFloat(t.entry).toLocaleString()+'</td><td class="mono">$'+parseFloat(t.exit).toLocaleString()+'</td><td style="color:#6b7280">'+t.size+'</td><td class="mono" style="font-weight:700;color:'+clr(p)+'">$'+fmtP(p)+'</td><td '+rb+'>'+t.result+'</td><td style="color:#9ca3af;font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis">'+(t.notes||'&mdash;')+'</td><td><button class="del-btn" onclick="delTrade(\''+t.id+'\')">&#10005;</button></td></tr>';
+  }).join('');
+  w.innerHTML='<div style="overflow-x:auto"><table class="tt"><thead><tr><th>Date</th><th>Ticker</th><th>Setup</th><th>Session</th><th>Dir</th><th>Entry</th><th>Exit</th><th>Size</th><th>P&amp;L</th><th>Result</th><th>Notes</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+updateProgress();renderStats();renderTable();
+</script>
+</body>
